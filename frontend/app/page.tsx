@@ -1,13 +1,41 @@
+
 import Image from "next/image";
 import { Suspense } from "react";
 
 import Content from "@/components/Content";
 
-async function ContentList() {
-  // TODO: Fetch the data from the backend (http://localhost:8000/data)
+type Source = {
+  id: string;
+  title: string;
+  source: string;
+  favicon: string | null;
+};
 
-  // Each piece of content in the list should have its own Content component
-  return <Content />;
+type Data = {
+  category: string;
+  question: string;
+  content: string;
+  sources: Source[];
+};
+
+async function ContentList() {
+  const response = await fetch("http://localhost:8000/data", {
+    cache: "no-store",
+  });
+
+  if (!response.ok) {
+    return <p>Unable to load the advice data.</p>;
+  }
+
+  const items: Data[] = await response.json();
+
+  return (
+    <div className="flex w-full flex-col gap-6">
+      {items.map((item, index) => (
+        <Content key={index} item={item} />
+      ))}
+    </div>
+  );
 }
 
 export default function Home() {
@@ -22,9 +50,11 @@ export default function Home() {
           priority
         />
         <h1 className="mt-4 text-2xl font-bold">Citizens Advice SORT</h1>
-        <h2 className="text-lg font-medium">Junior Developer Practical</h2>
+        <h2 className="text-lg font-medium">
+          Junior Developer Practical
+        </h2>
       </div>
-      {/* Anything that fetches data goes inside Suspense, which shows the fallback until it's ready */}
+
       <Suspense fallback={<p>Loading...</p>}>
         <ContentList />
       </Suspense>
