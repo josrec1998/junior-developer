@@ -7,8 +7,8 @@ class Source(BaseModel):
     source: str
 
 
-class Data(BaseModel):
-    category: str
-    question: str
-    sources: list[Source]
-    content: str
+class Source(BaseModel):
+    id: str
+    title: str
+    source: str
+    favicon: str | None = None
